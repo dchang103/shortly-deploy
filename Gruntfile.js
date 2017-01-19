@@ -25,24 +25,28 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: [ 'server.js', 'server-config.js', 'app/**/*.js', 'public/**/*.js', 'lib/**/*.js'],
-        dest: 'dist/built.js',
+        src: 'public/client/**/*.js',
+        dest: 'public/dist/app.js',
       },
+      libs: {
+        src: ['public/lib/underscore.js', 'public/lib/jquery.js', 'public/lib/handlebars.js', 'public/lib/backbone.js'],
+        dest: 'public/dist/libs.js',
+      }
     },
     // The pattern of /**/ basically mean traverse through all the children levels of the directory 
     // hierarchy, and the *.js means all the file with extension of js
     uglify: {
       my_target: {
         files: {
-        'dist/built.min.js': ['dist/built.js']
+          'public/dist/app.min.js': 'public/dist/app.js',
+          'public/dist/libs.min.js': 'public/dist/libs.js',
         }
       }
     },
 
     eslint: {
-      target: [
+      target: [ 'app/**/*.js', 'lib/**/*.js' ]
         // Add list of files to lint here
-      ]
     },
 
     cssmin: {
@@ -66,7 +70,8 @@ module.exports = function(grunt) {
     },
 
     shell: {
-      prodServer: {
+      push: {
+        command: 'git push live master'
       }
     },
   });
@@ -88,27 +93,20 @@ module.exports = function(grunt) {
   // Main grunt tasks
   ////////////////////////////////////////////////////
 
-  grunt.registerTask('durr', [ 'concat', 'uglify']);
-
   grunt.registerTask('test', [
     'mochaTest'
   ]);
 
-  grunt.registerTask('build', [
-  ]);
+  grunt.registerTask('build', [ 'concat', 'uglify']);
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      // add your production server task here
+      grunt.task.run(['shell']);
     } else {
-      console.log('WHAT IS PROD', grunt.option('prod'), 'WHAT IS N', n)
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
-
+  grunt.registerTask('deploy', [ 'build', 'eslint', 'test', 'upload' ]);
 
 };
