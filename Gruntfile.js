@@ -19,8 +19,24 @@ module.exports = function(grunt) {
         script: 'server.js'
       }
     },
-
+    
+    concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: [ 'server.js', 'server-config.js', 'app/**/*.js', 'public/**/*.js', 'lib/**/*.js'],
+        dest: 'dist/built.js',
+      },
+    },
+    // The pattern of /**/ basically mean traverse through all the children levels of the directory 
+    // hierarchy, and the *.js means all the file with extension of js
     uglify: {
+      my_target: {
+        files: {
+        'dist/built.min.js': ['dist/built.js']
+        }
+      }
     },
 
     eslint: {
@@ -72,6 +88,8 @@ module.exports = function(grunt) {
   // Main grunt tasks
   ////////////////////////////////////////////////////
 
+  grunt.registerTask('durr', [ 'concat', 'uglify']);
+
   grunt.registerTask('test', [
     'mochaTest'
   ]);
@@ -83,6 +101,7 @@ module.exports = function(grunt) {
     if (grunt.option('prod')) {
       // add your production server task here
     } else {
+      console.log('WHAT IS PROD', grunt.option('prod'), 'WHAT IS N', n)
       grunt.task.run([ 'server-dev' ]);
     }
   });
