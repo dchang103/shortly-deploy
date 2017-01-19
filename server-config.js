@@ -22,6 +22,7 @@ app.use(session({
   saveUninitialized: true
 }));
 
+console.log("don't die")
 app.get('/', util.checkUser, handler.renderIndex);
 app.get('/create', util.checkUser, handler.renderIndex);
 
