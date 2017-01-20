@@ -32,6 +32,10 @@ module.exports = function(grunt) {
         src: ['public/lib/underscore.js', 'public/lib/jquery.js', 'public/lib/handlebars.js', 'public/lib/backbone.js'],
         dest: 'public/dist/libs.js',
       }
+      // css: {
+      //   src: ['public/style.css'],
+      //   dest: 'public/dist/style.css'
+      // }
     },
     // The pattern of /**/ basically mean traverse through all the children levels of the directory 
     // hierarchy, and the *.js means all the file with extension of js
@@ -40,6 +44,7 @@ module.exports = function(grunt) {
         files: {
           'public/dist/app.min.js': 'public/dist/app.js',
           'public/dist/libs.min.js': 'public/dist/libs.js',
+          // 'public/dist/style.min.css': 'public/dist/style.css'
         }
       }
     },
@@ -74,6 +79,13 @@ module.exports = function(grunt) {
         command: 'git push live master'
       }
     },
+    cssmin: {
+      target: {
+        files: {
+          'public/dist/style.min.css': 'public/style.css',
+        }
+      }
+    }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -84,6 +96,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   grunt.registerTask('server-dev', function (target) {
     grunt.task.run([ 'nodemon', 'watch' ]);
@@ -97,10 +110,10 @@ module.exports = function(grunt) {
     'mochaTest'
   ]);
 
-  grunt.registerTask('build', [ 'concat', 'uglify']);
+  grunt.registerTask('build', [ 'concat', 'uglify', 'cssmin']);
 
   grunt.registerTask('upload', function(n) {
-    if (grunt.option('prod')) {
+    if (grunt.option('push')) {
       grunt.task.run(['shell']);
     } else {
       grunt.task.run([ 'server-dev' ]);
